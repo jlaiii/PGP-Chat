@@ -284,6 +284,22 @@
       font-weight: 600;
     }
 
+    /* Footer for project link */
+    .project-footer {
+        margin-top: 25px;
+        font-size: 0.9em;
+        color: #6c757d;
+        text-align: center;
+    }
+    .project-footer a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .project-footer a:hover {
+        text-decoration: underline;
+    }
+
     /* --- Mobile Responsiveness --- */
     @media (max-width: 768px) {
       body {
@@ -433,7 +449,6 @@
   <div id="room-controls">
     <input id="room-input" type="text" placeholder="Enter Room ID to join or create" autocomplete="off" />
     <button id="join-btn">Join Room</button>
-    <button id="create-btn">Create New Private Room</button>
   </div>
 
   <div id="room-info-container">
@@ -468,13 +483,16 @@
       <label for="raw-chat-toggle">Show Raw Chat (Server View)</label>
   </div>
 
+  <footer class="project-footer">
+    See project here <a href="https://github.com/jlaiii/PGP-Chat" target="_blank">https://github.com/jlaiii/PGP-Chat</a>
+  </footer>
+
   <script>
     const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
     let currentRoom = '';
 
     const roomInput = document.getElementById('room-input');
     const joinBtn = document.getElementById('join-btn');
-    const createBtn = document.getElementById('create-btn');
     const currentRoomSpan = document.getElementById('current-room'); // Only one span needed now
     const copyRoomBtn = document.getElementById('copy-room-btn');
     const messagesDiv = document.getElementById('messages');
@@ -867,11 +885,6 @@
         } else {
             alert("Please enter a Room ID to join.");
         }
-    };
-
-    createBtn.onclick = () => {
-        const newRoomId = randomString();
-        setupRoom(newRoomId);
     };
 
     rawChatToggle.addEventListener('change', () => {
