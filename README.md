@@ -3,7 +3,7 @@
 ## Live Website
 
 You can use the live version of PGP Chat+ directly here:
-**[Live Website URL Here]** (Remember to replace this with your actual GitHub Pages URL!)
+**[[Live Website URL Here](https://jlaiii.github.io/PGP-Chat/)]**
 
 ---
 
