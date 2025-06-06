@@ -29,18 +29,8 @@
       text-align: center;
     }
 
-    /* Slogan Style */
-    .slogan {
-      font-style: italic;
-      color: #555;
-      margin-bottom: 30px; /* More space below slogan */
-      text-align: center;
-      font-size: 1.1em;
-      max-width: 500px;
-    }
-
     /* General Container Styling */
-    #room-controls, #room-info-container, #room-warning, #chat-container,
+    #room-controls, #room-info-container, #chat-container,
     .bottom-toggles-container, #participants-container {
       width: 600px; /* Desktop width */
       max-width: 100%; /* Max width for smaller screens */
@@ -96,19 +86,23 @@
       cursor: not-allowed;
     }
 
+    /* Modified: Compact room controls */
     #room-controls {
       display: flex;
-      flex-wrap: wrap; /* Allow wrapping */
-      gap: 10px; /* Space between elements */
+      flex-wrap: wrap;
+      gap: 8px; /* Reduced gap */
       justify-content: center;
-      padding: 25px; /* More padding for controls */
+      padding: 15px; /* Reduced padding */
+      margin-bottom: 20px;
     }
     #room-controls input[type=text] {
       flex: 1;
-      min-width: 250px; /* Ensure input doesn't get too small */
+      min-width: 200px; /* Adjusted min-width */
+      padding: 10px 12px; /* Slightly smaller padding */
     }
     #room-controls button {
-      margin-left: 0; /* Remove default margin */
+      padding: 8px 18px; /* Slightly smaller buttons */
+      font-size: 0.95em;
     }
 
     #room-info-container {
@@ -121,62 +115,54 @@
       flex-wrap: wrap; /* Allow wrapping for room ID and copy button */
       text-align: center;
     }
+    /* Styles for the room ID display (always visible) */
     #current-room {
       font-weight: 600;
       color: #007bff;
       word-break: break-all; /* Allow long room IDs to break */
     }
+
     #copy-room-btn {
       padding: 8px 15px; /* Smaller copy button */
       font-size: 0.9em;
     }
 
-    #room-warning {
-      text-align: center;
-      background-color: #fff3cd; /* Light yellow for warning */
-      color: #856404;
-      border: 1px solid #ffeeba;
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 0.9em;
-      margin-bottom: 20px;
-    }
-
     /* Chat Container */
     #chat-container {
-      padding: 0; /* No internal padding for chat container itself */
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Ensure chat container has shadow */
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       border-radius: 8px;
-      overflow: hidden; /* To contain messages and input well */
+      overflow: hidden;
       display: flex;
-      flex-direction: column; /* Stack children vertically */
-      height: 400px; /* Default height for desktop */
+      flex-direction: column;
+      height: 500px; /* Increased height for desktop */
     }
 
     #messages {
-      flex-grow: 1; /* Allow messages to take available height */
+      flex-grow: 1;
       overflow-y: auto;
-      padding: 15px; /* Padding inside the messages area */
-      background-color: #e9ecef; /* Light gray for chat background */
+      padding: 15px;
+      background-color: #e9ecef;
       border-bottom: 1px solid #dee2e6;
       display: flex;
       flex-direction: column;
-      gap: 8px; /* Space between messages */
+      gap: 8px;
     }
 
     .message-bubble {
         background-color: #ffffff;
         padding: 8px 12px;
-        border-radius: 18px; /* More rounded */
-        max-width: 80%; /* Limit bubble width */
+        border-radius: 18px;
+        max-width: 80%;
         word-wrap: break-word;
-        align-self: flex-start; /* Default for general messages */
-        box-shadow: 0 1px 2px rgba(0,0,0,0.08); /* Subtle shadow on bubbles */
+        align-self: flex-start;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08);
     }
 
+    /* Styles for system messages displayed within the chat */
     .system-message {
       font-style: italic;
-      color: #6c757d; /* Muted gray for system messages */
+      color: #6c757d;
       text-align: center;
       font-size: 0.9em;
       padding: 5px;
@@ -184,24 +170,25 @@
       background-color: #e2e6ea;
       align-self: center;
       max-width: 90%;
+      margin: 4px 0;
     }
 
     #input-container {
       display: flex;
-      padding: 15px; /* Padding around input */
-      background-color: #f8f9fa; /* Lighter background for input area */
+      padding: 15px;
+      background-color: #f8f9fa;
       border-top: 1px solid #e9ecef;
-      align-items: center; /* Vertically center items */
-      gap: 10px; /* Space between username, input, and button */
+      align-items: center;
+      gap: 10px;
     }
 
     #username-display {
-      min-width: 90px; /* Slightly wider */
+      min-width: 90px;
       font-weight: 600;
       color: #4a4a4a;
       display: flex;
-      align-items: center; /* Vertically center username */
-      justify-content: flex-end; /* Align right */
+      align-items: center;
+      justify-content: flex-end;
       padding-right: 5px;
       text-align: right;
     }
@@ -212,42 +199,16 @@
       padding: 12px 25px;
     }
 
-    /* Key Exchange Status */
-    #key-exchange-status {
-      margin: 15px; /* Margin inside chat container, outside specific message area */
-      font-size: 0.9em;
-      font-style: italic;
-      text-align: center;
-      padding: 10px;
-      border-radius: 5px;
-      display: none; /* Hidden by default */
-    }
-    #key-exchange-status.pending-own, #key-exchange-status.pending-others {
-      background-color: #ffe0b2; /* Light orange */
-      color: #e65100; /* Darker orange */
-      border: 1px solid #ff9800;
-    }
-    #key-exchange-status.ready {
-      background-color: #d4edda; /* Light green */
-      color: #155724; /* Darker green */
-      border: 1px solid #28a745;
-    }
-    #key-exchange-status.error { /* New error state for status */
-      background-color: #f8d7da; /* Light red */
-      color: #721c24; /* Darker red */
-      border: 1px solid #dc3545;
-    }
-
     /* Toggle Buttons Container (at the bottom) */
     .bottom-toggles-container {
-      padding: 15px; /* Smaller padding */
+      padding: 15px;
       margin-bottom: 15px;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
       background-color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       border-radius: 8px;
     }
     .bottom-toggles-container label {
@@ -256,16 +217,16 @@
         cursor: pointer;
     }
     .bottom-toggles-container input[type="checkbox"] {
-        transform: scale(1.2); /* Slightly larger checkbox */
+        transform: scale(1.2);
         cursor: pointer;
     }
 
     /* Participants Section */
     #participants-container {
-      margin-top: 0; /* Align with other sections */
+      margin-top: 0;
       padding: 20px;
     }
-    #participants-header { /* New flex container for H2 and toggle */
+    #participants-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -274,11 +235,11 @@
         padding-bottom: 10px;
     }
     #participants-container h2 {
-      margin: 0; /* Remove default margin as it's in a flex container */
+      margin: 0;
       font-size: 1.2em;
       color: #2c3e50;
     }
-    #auto-add-toggle-group { /* Group for the auto-add toggle and label */
+    #auto-add-toggle-group {
         display: flex;
         align-items: center;
         gap: 5px;
@@ -286,24 +247,24 @@
         color: #495057;
         cursor: pointer;
     }
-    #auto-add-new-users-toggle { /* Specific style for this checkbox */
-        transform: scale(1.1); /* Slightly larger checkbox */
+    #auto-add-new-users-toggle {
+        transform: scale(1.1);
         cursor: pointer;
-        margin: 0; /* Remove default margin */
+        margin: 0;
     }
 
     #participant-list {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      max-height: 150px; /* Limit height for scroll */
+      max-height: 150px;
       overflow-y: auto;
-      padding-right: 5px; /* Space for scrollbar */
+      padding-right: 5px;
     }
     .participant-entry {
       display: flex;
       align-items: center;
-      background-color: #e9f5ff; /* Light blue for participant tags */
+      background-color: #e9f5ff;
       border: 1px solid #cceeff;
       padding: 5px 10px;
       border-radius: 20px;
@@ -317,7 +278,7 @@
       cursor: pointer;
     }
     .participant-entry.self {
-      background-color: #d4edda; /* Light green for self */
+      background-color: #d4edda;
       border-color: #28a745;
       color: #155724;
       font-weight: 600;
@@ -326,106 +287,102 @@
     /* --- Mobile Responsiveness --- */
     @media (max-width: 768px) {
       body {
-        padding: 10px; /* Less padding on smaller screens */
+        padding: 10px;
       }
 
       h1 {
         font-size: 1.8em;
       }
 
-      .slogan {
-        font-size: 1em;
-        margin-bottom: 20px;
-      }
-
       /* Adjust width for all main containers */
-      #room-controls, #room-info-container, #room-warning, #chat-container,
+      #room-controls, #room-info-container, #chat-container,
       .bottom-toggles-container, #participants-container {
-        width: 100%; /* Take full width on smaller screens */
+        width: 100%;
         margin-bottom: 15px;
-        padding: 15px; /* Slightly less padding */
-        border-radius: 5px; /* Less aggressive rounding */
+        padding: 15px;
+        border-radius: 5px;
       }
 
       #room-controls {
-        flex-direction: column; /* Stack controls vertically */
-        align-items: stretch; /* Stretch items to full width */
+        flex-direction: column;
+        align-items: stretch;
       }
       #room-controls input[type=text],
       #room-controls button {
-        width: 100%; /* Full width for inputs and buttons */
-        min-width: unset; /* Remove min-width restriction */
-        margin-left: 0; /* Ensure no left margin */
+        width: 100%;
+        min-width: unset;
+        margin-left: 0;
       }
       #room-controls button {
-        margin-top: 10px; /* Add space between stacked buttons */
+        margin-top: 8px; /* Adjusted margin */
       }
 
       #room-info-container {
-        flex-direction: column; /* Stack room ID and copy button */
+        flex-direction: column;
         gap: 10px;
         font-size: 1em;
       }
       #current-room {
-        font-size: 0.9em; /* Smaller font for long room ID */
+        font-size: 0.9em;
       }
       #copy-room-btn {
-        width: 100%; /* Full width for copy button */
+        width: 100%;
       }
 
       #chat-container {
-        height: 60vh; /* Use viewport height for chat area */
-        min-height: 250px; /* Minimum height to ensure usability */
+        height: 70vh; /* Increased viewport height for chat area */
+        min-height: 250px;
       }
 
       #messages {
-        padding: 10px; /* Less padding for messages */
+        padding: 10px;
       }
 
       .message-bubble {
-        max-width: 95%; /* Allow bubbles to take more width */
+        max-width: 95%;
         font-size: 0.9em;
       }
 
       .system-message {
         font-size: 0.8em;
+        padding: 4px 8px;
       }
 
       #input-container {
-        flex-wrap: wrap; /* Allow wrapping for input elements */
+        flex-wrap: wrap;
         padding: 10px;
       }
       #username-display {
-        min-width: unset; /* Allow username to shrink */
-        width: 100%; /* Take full width */
-        text-align: left; /* Align username to the left */
-        margin-bottom: 5px; /* Space below username */
+        min-width: unset;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 5px;
         padding-right: 0;
       }
       #msg {
-        flex-basis: 70%; /* Input takes 70% of available space */
+        flex-basis: 70%;
       }
       #send-btn {
-        flex-basis: 25%; /* Send button takes 25% */
-        margin-left: auto; /* Push send button to the right if space allows */
+        flex-basis: 25%;
+        margin-left: auto;
       }
 
       #participants-container {
         padding: 15px;
       }
       #participants-header {
-          flex-direction: column; /* Stack heading and toggle */
+          flex-direction: column;
           align-items: flex-start;
           gap: 10px;
       }
       #participants-container h2 {
-        font-size: 1.1em; /* Smaller heading on mobile */
+        font-size: 1.1em;
       }
       #auto-add-toggle-group {
         font-size: 0.85em;
       }
       #participant-list {
-        max-height: 120px; /* Slightly shorter list for mobile */
+        max-height: 120px;
       }
       .participant-entry {
         font-size: 0.85em;
@@ -439,7 +396,7 @@
         padding: 8px;
       }
 
-      #room-controls, #room-info-container, #room-warning, #chat-container,
+      #room-controls, #room-info-container, #chat-container,
       .bottom-toggles-container, #participants-container {
         padding: 12px;
       }
@@ -465,13 +422,14 @@
       }
 
       #chat-container {
-        height: 65vh; /* Increase chat height slightly on very small screens */
+        height: 75vh; /* Increase chat height slightly on very small screens */
       }
     }
   </style>
 </head>
 <body>
   <h1>PGP Chat+</h1>
+
   <div id="room-controls">
     <input id="room-input" type="text" placeholder="Enter Room ID to join or create" autocomplete="off" />
     <button id="join-btn">Join Room</button>
@@ -479,12 +437,9 @@
   </div>
 
   <div id="room-info-container">
-    <div>Room ID: <span id="current-room"></span></div>
+    <div>Room ID:
+        <span id="current-room"></span> </div>
     <button id="copy-room-btn" title="Copy Room ID">Copy</button>
-  </div>
-
-  <div id="room-warning" class="private">
-    This is a private, <strong>end-to-end encrypted</strong> room. Messages are visible <strong>only to people who have this Room ID and your shared PGP keys.</strong> Share it carefully!
   </div>
 
   <div id="participants-container">
@@ -500,7 +455,6 @@
   </div>
 
   <div id="chat-container">
-    <div id="key-exchange-status"></div>
     <div id="messages"></div>
     <div id="input-container">
       <div id="username-display"></div>
@@ -521,74 +475,72 @@
     const roomInput = document.getElementById('room-input');
     const joinBtn = document.getElementById('join-btn');
     const createBtn = document.getElementById('create-btn');
-    const currentRoomSpan = document.getElementById('current-room');
+    const currentRoomSpan = document.getElementById('current-room'); // Only one span needed now
     const copyRoomBtn = document.getElementById('copy-room-btn');
-    const roomWarning = document.getElementById('room-warning');
     const messagesDiv = document.getElementById('messages');
     const msgInput = document.getElementById('msg');
     const sendBtn = document.getElementById('send-btn');
     const usernameDisplay = document.getElementById('username-display');
 
-    const keyExchangeStatus = document.getElementById('key-exchange-status'); // Status indicator
-    const rawChatToggle = document.getElementById('raw-chat-toggle'); // Raw chat toggle checkbox
-    const autoAddNewUsersToggle = document.getElementById('auto-add-new-users-toggle'); // Auto-add toggle
+    const rawChatToggle = document.getElementById('raw-chat-toggle');
+    const autoAddNewUsersToggle = document.getElementById('auto-add-new-users-toggle');
 
-    const participantListDiv = document.getElementById('participant-list'); // New participant list div
+    const participantListDiv = document.getElementById('participant-list');
 
     let board;
     let listeners = [];
-    let ownKeysGenerated = false; // Flag to track if own PGP keys are generated
-    let showRawChat = false; // State for raw chat view
-    let autoAddRecipients = true; // State for auto-add new users (default to true)
-    let messageCache = []; // Stores all messages for re-rendering on toggle
-    const displayedMessageIds = new Set(); // Tracks unique IDs processed by Gun.map().on
+    let ownKeysGenerated = false;
+    let showRawChat = false;
+    let autoAddRecipients = true;
+    let messageCache = [];
+    const displayedMessageIds = new Set();
 
-    // Map to store other users' public keys by username
     const otherUsersPublicKeys = new Map();
-    // Set to store currently selected recipient usernames for encryption
     const selectedRecipients = new Set();
 
-    // Function to update key exchange status UI and enable/disable inputs
-    function updateKeyExchangeStatus(statusType) {
-      keyExchangeStatus.style.display = 'block';
-      keyExchangeStatus.classList.remove('ready', 'pending-own', 'pending-others', 'error'); // Clear previous classes
+    function updateRoomDisplay() {
+        if (!currentRoom) {
+            currentRoomSpan.textContent = "N/A";
+            copyRoomBtn.disabled = true;
+            return;
+        }
+        currentRoomSpan.textContent = currentRoom; // Always show the actual ID
+        copyRoomBtn.disabled = false;
+    }
 
+    function updateSystemMessageInCache(id, newText, newClass = '') {
+        const existingIndex = messageCache.findIndex(msg => msg.id === id);
+        if (existingIndex !== -1) {
+            messageCache[existingIndex].displayText = newText;
+            messageCache[existingIndex].rawText = newText;
+            messageCache[existingIndex].classes = newClass;
+        } else {
+            messageCache.push({ id: id, displayText: newText, rawText: newText, isSystem: true, classes: newClass });
+        }
+        renderMessages();
+    }
+
+    function updateKeyExchangeStatus(statusType) {
       msgInput.disabled = true;
       sendBtn.disabled = true;
 
-      if (statusType === 'generating-keys') {
-        keyExchangeStatus.textContent = "Generating your PGP keys for secure communication...";
-        keyExchangeStatus.classList.add('pending-own');
-      } else if (statusType === 'waiting-for-others') {
-        keyExchangeStatus.textContent = "Your PGP keys are active. Waiting for other users to join and exchange keys. Sending is disabled to ensure encryption for all participants.";
-        keyExchangeStatus.classList.add('pending-others');
-      } else if (statusType === 'ready-to-send') {
-        keyExchangeStatus.textContent = "Secure connection established! Messages will be encrypted for all known participants (check Participants list).";
-        keyExchangeStatus.classList.add('ready');
+      // Enable sending if keys are generated (even if only self is present in selectedRecipients)
+      if (statusType === 'ready-to-send') {
         msgInput.disabled = false;
         sendBtn.disabled = false;
-      } else if (statusType === 'no-room') {
-        // This state should mostly be bypassed now with auto-create
-        keyExchangeStatus.textContent = "Please join or create a private room to start chatting.";
-        keyExchangeStatus.style.display = 'block';
-        keyExchangeStatus.classList.add('pending-others'); // Neutral style for 'no room' state
-      } else if (statusType === 'error') {
-        keyExchangeStatus.classList.add('error');
       }
     }
 
-    // New function to consolidate logic for checking key readiness
     function checkKeyExchangeReadiness() {
-        if (ownKeysGenerated && selectedRecipients.size > 0) { // Check if we have own keys and at least one recipient (including self)
+        // Allow sending if own keys are generated.
+        // The message will be encrypted for the sender even if no other participants are selected.
+        if (ownKeysGenerated) {
             updateKeyExchangeStatus('ready-to-send');
-        } else if (ownKeysGenerated) {
-            updateKeyExchangeStatus('waiting-for-others'); // If no other users are selected, but keys are ready
         } else {
             updateKeyExchangeStatus('generating-keys');
         }
     }
 
-    // Generate a random username (name + number)
     function randomUsername() {
       const names = ['mark','jane','alex','lily','chris','sam','max','tina','leo','nina'];
       return names[Math.floor(Math.random()*names.length)] + Math.floor(Math.random()*900+100);
@@ -597,10 +549,8 @@
     usernameDisplay.textContent = username;
     msgInput.placeholder = `Message as ${username}...`;
 
-    // --- MODIFIED: randomString to generate length between 16 and 20 ---
     function randomString() {
       const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      // Generate a random length between 16 and 20 (inclusive)
       const length = Math.floor(Math.random() * (20 - 16 + 1)) + 16;
       let result = '';
       for(let i=0; i<length; i++){
@@ -608,36 +558,37 @@
       }
       return result;
     }
-    // -------------------------------------------------------------------
 
-    // Clears messages from the DOM
     function clearMessages() {
       messagesDiv.innerHTML = '';
     }
 
-    // Adds a message to the DOM display (used by renderMessages)
-    function addMessageToDisplay(id, text, isSystem = false) {
-      // This check is mainly for re-rendering from cache, ensuring no duplicate DOM elements
+    function addMessageToDisplay(id, text, isSystem = false, classes = '') {
       if(document.getElementById(id)) {
+        const existingDiv = document.getElementById(id);
+        existingDiv.textContent = text;
+        existingDiv.className = 'message-bubble' + (isSystem ? ' system-message ' + classes : '');
         return;
       }
       const div = document.createElement('div');
       div.id = id;
-      div.classList.add('message-bubble'); // Add bubble class
+      div.classList.add('message-bubble');
       if (isSystem) {
         div.classList.add('system-message');
+        if (classes) {
+          div.classList.add(...classes.split(' '));
+        }
       }
       div.textContent = text;
       messagesDiv.appendChild(div);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // Renders all messages from messageCache to the UI based on showRawChat state
     function renderMessages() {
-        clearMessages(); // Clear existing messages in the DOM
+        clearMessages();
         messageCache.forEach(msg => {
             const textToDisplay = showRawChat && msg.rawText !== null ? msg.rawText : msg.displayText;
-            addMessageToDisplay(msg.id, textToDisplay, msg.isSystem);
+            addMessageToDisplay(msg.id, textToDisplay, msg.isSystem, msg.classes);
         });
     }
 
@@ -645,33 +596,20 @@
       listeners.forEach(off => off());
       listeners = [];
       otherUsersPublicKeys.clear();
-      selectedRecipients.clear(); // Clear selected recipients too
-      messageCache = []; // Clear message cache
-      displayedMessageIds.clear(); // Clear processed IDs for new room
-
-      updateParticipantListUI(); // Clear participant UI
+      selectedRecipients.clear();
+      messageCache = [];
+      displayedMessageIds.clear();
+      currentRoom = '';
+      updateRoomDisplay();
+      updateParticipantListUI();
       checkKeyExchangeReadiness();
     }
 
-    function updateRoomWarning() {
-      roomWarning.innerHTML = 'This is a private, <strong>end-to-end encrypted</strong> room. Messages are visible <strong>only to people who have this Room ID and your shared PGP keys.</strong> Share it carefully!';
-      roomWarning.classList.remove('public');
-      roomWarning.classList.add('private');
-    }
-
-    function updateRoomDisplay() {
-      currentRoomSpan.style.display = 'inline';
-      copyRoomBtn.style.display = 'inline-block';
-      currentRoomSpan.textContent = currentRoom;
-    }
-
-    // PGP keypair storage
     let privateKeyObj;
     let publicKeyArmored;
     let privateKeyArmored;
 
     async function generatePGPKeys() {
-      updateKeyExchangeStatus('generating-keys'); // Updates key status UI
       try {
         const { privateKey, publicKey } = await openpgp.generateKey({
           type: 'rsa',
@@ -683,29 +621,24 @@
         publicKeyArmored = publicKey;
         privateKeyObj = await openpgp.readPrivateKey({ armoredKey: privateKeyArmored });
 
-        ownKeysGenerated = true; // Mark as true after successful generation
-        selectedRecipients.add(username); // Always add self to selected recipients
+        ownKeysGenerated = true;
+        selectedRecipients.add(username); // Add self to recipients
       } catch (e) {
-        console.error("PGP Key Generation Error:", e); // Log full error to browser console
+        console.error("PGP Key Generation Error:", e);
         alert("Failed to generate PGP keys. Secure chat will not be possible. Check browser console for details.");
-        keyExchangeStatus.textContent = "Error generating PGP keys. Please refresh and try again.";
-        keyExchangeStatus.classList.add('error');
       }
     }
 
-    // Update the UI for participants
     function updateParticipantListUI() {
-        participantListDiv.innerHTML = ''; // Clear existing list
+        participantListDiv.innerHTML = '';
 
-        // Add self to the list (always checked, not selectable)
         const selfEntry = document.createElement('div');
         selfEntry.classList.add('participant-entry', 'self');
         selfEntry.innerHTML = `<span>${username} (You)</span>`;
         participantListDiv.appendChild(selfEntry);
 
-        // Add other users
         otherUsersPublicKeys.forEach((key, user) => {
-            if (user === username) return; // Skip self if somehow included
+            if (user === username) return;
 
             const entry = document.createElement('div');
             entry.classList.add('participant-entry');
@@ -715,7 +648,6 @@
             checkbox.id = `participant-${user}`;
             checkbox.dataset.username = user;
 
-            // Check if this user is already in selectedRecipients
             checkbox.checked = selectedRecipients.has(user);
 
             checkbox.addEventListener('change', (event) => {
@@ -724,7 +656,7 @@
                 } else {
                     selectedRecipients.delete(user);
                 }
-                checkKeyExchangeReadiness(); // Re-evaluate send button state if recipients change
+                checkKeyExchangeReadiness();
             });
 
             const label = document.createElement('label');
@@ -737,7 +669,6 @@
         });
     }
 
-    // Function to decrypt a message with private key
     async function decryptMessage(encrypted) {
       try {
         const message = await openpgp.readMessage({
@@ -750,17 +681,15 @@
         });
         return decrypted;
       } catch (e) {
-        // Log decryption error for internal debugging, but return null
-        console.warn("Decryption Error (message not for current user or malformed):", e); // Use warn for failed decryptions
-        return null; // failed to decrypt
+        console.warn("Decryption Error (message not for current user or malformed):", e);
+        return null;
       }
     }
 
-    // Function to encrypt a message with multiple recipient's public keys
     async function encryptMessageForMultiple(messageText, publicKeysArray) {
       if (publicKeysArray.length === 0) {
         console.warn("No public keys provided for encryption. Message will not be encrypted.");
-        return null;
+        return null; // Return null if no keys to encrypt for
       }
       try {
         const encryptionKeys = await Promise.all(publicKeysArray.map(key => openpgp.readKey({ armoredKey: key })));
@@ -772,7 +701,7 @@
         });
         return encrypted;
       } catch (e) {
-        console.error("Encryption Error:", e); // Log full error to browser console
+        console.error("Encryption Error:", e);
         return null;
       }
     }
@@ -781,20 +710,19 @@
       if (currentRoom === room && board) {
         return;
       }
-      cleanupListeners(); // Cleans up previous room's state and resets key exchange status
+      cleanupListeners();
 
       currentRoom = room;
-      updateRoomWarning();
       updateRoomDisplay();
-      // Clear the input field after successful room setup (only if it was manually entered)
+
       if (roomInput.value.trim() === room) {
         roomInput.value = '';
       }
 
+      updateSystemMessageInCache('system-room-warning', `This is a private, end-to-end encrypted room. Messages are visible only to people who have this Room ID and your shared PGP keys. Share it carefully!`);
 
       board = gun.get('private-room-chat').get(room);
 
-      // Send public key once when room is set up
       if (publicKeyArmored) {
         const id = 'pubkey-' + username;
         board.get(id).put({
@@ -810,46 +738,45 @@
             return;
         }
 
-        // Use displayedMessageIds to prevent redundant *processing* of already handled IDs
         if (displayedMessageIds.has(id)) {
             return;
         }
 
-        // Mark as processed immediately to avoid re-processing if Gun re-emits quickly
         displayedMessageIds.add(id);
 
         if (data.type === 'pubkey' && data.username && data.publicKey) {
             if (data.username !== username && !otherUsersPublicKeys.has(data.username)) {
-                // Store the new user's public key
                 otherUsersPublicKeys.set(data.username, data.publicKey);
 
-                // --- NEW: Apply auto-add logic for new users ---
+                messageCache.push({
+                    id: `system-user-joined-${data.username}-${Date.now()}`,
+                    displayText: `${data.username} has joined the room.`,
+                    rawText: `${data.username} has joined the room.`,
+                    isSystem: true,
+                    classes: ''
+                });
+                renderMessages();
+
                 if (autoAddRecipients) {
                     selectedRecipients.add(data.username);
                 }
-                // --- END NEW ---
 
                 checkKeyExchangeReadiness();
-                updateParticipantListUI(); // Rebuilds the UI to show the new participant as checked/unchecked
+                updateParticipantListUI();
             }
             return;
         }
 
         if (data.text) {
-            // ONLY process messages that claim to be encrypted
             if (data.text.startsWith('[enc]')) {
                 const encryptedPart = data.text.slice(5);
-                const decrypted = await decryptMessage(encryptedPart); // Always attempt decryption
+                const decrypted = await decryptMessage(encryptedPart);
 
-                // Only add to messageCache if successfully decrypted
                 if (decrypted) {
                     messageCache.push({ id: id, displayText: decrypted, rawText: data.text, isSystem: false });
                 }
-                // If decryption fails (e.g., message not for this user or malformed),
-                // it is *not* added to messageCache, effectively hiding it.
             }
-            // Any message without '[enc]' prefix is now completely ignored by the chat display logic.
-            renderMessages(); // Re-render to show new messages (or hide old ones)
+            renderMessages();
         }
       });
 
@@ -857,8 +784,7 @@
         if (typeof off === 'function') off();
       });
 
-      // Initial check for readiness immediately after setting up listener
-      setTimeout(checkKeyExchangeReadiness, 100); // Small delay to allow Gun to process initial map data
+      setTimeout(checkKeyExchangeReadiness, 100);
     }
 
     sendBtn.onclick = async () => {
@@ -869,25 +795,22 @@
       }
 
       if (!ownKeysGenerated) {
-        const message = "Sending aborted: Your own PGP keys are not yet generated. Please wait.";
-        updateKeyExchangeStatus('generating-keys');
+        alert("Your own PGP keys are not yet generated. Please wait.");
         return;
       }
 
-      // Collect public keys for all selected recipients, including self
       const recipientsForEncryption = [];
-      // Always add own public key first to ensure sender can decrypt their own messages
       if (publicKeyArmored) {
           recipientsForEncryption.push(publicKeyArmored);
       } else {
           console.error("Own public key not available for encryption.");
-          updateKeyExchangeStatus('error');
-          keyExchangeStatus.textContent = "Error: Your public key is not available. Cannot send message.";
+          alert("Error: Your public key is not available. Cannot send message.");
           return;
       }
 
+      // Collect public keys of all selected recipients (including self)
       selectedRecipients.forEach(user => {
-          if (user !== username) { // Don't add self twice
+          if (user !== username) { // Already added own key if available
               const pubKeyArmored = otherUsersPublicKeys.get(user);
               if (pubKeyArmored) {
                   recipientsForEncryption.push(pubKeyArmored);
@@ -895,23 +818,19 @@
           }
       });
 
-      if (recipientsForEncryption.length === 0) {
-          alert("No recipients selected! Message will not be encrypted for anyone. Please select participants in the list above.");
-          return;
-      }
+      // Removed: Blocking check for recipientsForEncryption.length === 0
+      // Message will be encrypted for at least the sender if own key is available.
 
       const messageContent = `${username}: ${text}`;
       let messageToSend;
-      const messageId = Date.now().toString() + '-' + randomString(); // Use randomString for message ID as well (it's now random length)
+      const messageId = Date.now().toString() + '-' + randomString();
 
       const encrypted = await encryptMessageForMultiple(messageContent, recipientsForEncryption);
       if (encrypted) {
           messageToSend = `[enc]${encrypted}`;
       } else {
-          keyExchangeStatus.textContent = "CRITICAL ERROR: Encryption failed. Message not sent. Check browser console.";
-          keyExchangeStatus.classList.remove('ready');
-          keyExchangeStatus.classList.add('error'); // Use error class for encryption failures
-          return; // Prevent sending if encryption fails
+          alert("CRITICAL ERROR: Encryption failed. Message not sent. Check browser console.");
+          return;
       }
 
       board.get(messageId).put({ text: messageToSend, timestamp: Date.now() });
@@ -919,7 +838,7 @@
     };
 
     msgInput.addEventListener('keydown', e => {
-      if(e.key === 'Enter' && !msgInput.disabled){ // Ensure input is enabled
+      if(e.key === 'Enter' && !msgInput.disabled){
         sendBtn.click();
       }
     });
@@ -936,9 +855,7 @@
           alert("Failed to copy Room ID. Please copy it manually.");
         });
       } else {
-        keyExchangeStatus.textContent = "No room ID available to copy.";
-        keyExchangeStatus.style.display = 'block';
-        keyExchangeStatus.classList.add('pending-others');
+        alert("No room ID available to copy.");
       }
     };
 
@@ -948,35 +865,31 @@
         if (roomId) {
             setupRoom(roomId);
         } else {
-            keyExchangeStatus.textContent = "Please enter a Room ID to join.";
-            keyExchangeStatus.style.display = 'block';
-            keyExchangeStatus.classList.add('pending-others');
+            alert("Please enter a Room ID to join.");
         }
     };
 
     createBtn.onclick = () => {
-        const newRoomId = randomString(); // Calls the new randomString function
+        const newRoomId = randomString();
         setupRoom(newRoomId);
     };
 
-    // Raw Chat Toggle event listener
     rawChatToggle.addEventListener('change', () => {
         showRawChat = rawChatToggle.checked;
-        renderMessages(); // Re-render all messages based on the new mode
+        renderMessages();
     });
 
-    // Auto-Add New Users Toggle event listener
     autoAddNewUsersToggle.addEventListener('change', () => {
         autoAddRecipients = autoAddNewUsersToggle.checked;
     });
 
     // Initialization: Generate keys and automatically create a room
-    (async () => {
-      await generatePGPKeys();
-      // Automatically create a room after keys are generated
-      const initialRoomId = randomString();
-      setupRoom(initialRoomId);
-    })();
+    document.addEventListener('DOMContentLoaded', async () => {
+        await generatePGPKeys();
+        const initialRoomId = randomString();
+        setupRoom(initialRoomId);
+        updateRoomDisplay();
+    });
   </script>
 </body>
 </html>
