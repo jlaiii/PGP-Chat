@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PGP Chat+</title>
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/openpgp@5.5.0/dist/openpgp.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Modern Reset & Base Styles */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5; /* Light gray background */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    h1 {
+      color: #2c3e50; /* Darker heading color */
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    /* Slogan Style */
+    .slogan {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 30px; /* More space below slogan */
+      text-align: center;
+      font-size: 1.1em;
+      max-width: 500px;
+    }
+
+    /* General Container Styling */
+    #room-controls, #room-info-container, #room-warning, #chat-container, 
+    .toggle-buttons-container, #participants-container { /* New participants-container */
+      width: 600px;
+      max-width: 100%;
+      margin-bottom: 20px; /* Consistent spacing */
+      padding: 20px;
+      background-color: #ffffff; /* White background for modules */
+      border-radius: 8px; /* Slightly rounded corners */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
+    }
+
+    /* Input and Button Styling */
+    input[type=text], #msg {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid #ced4da; /* Light border */
+      border-radius: 5px;
+      font-size: 1em;
+      color: #495057;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type=text]:focus, #msg:focus {
+      border-color: #007bff; /* Blue focus */
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Blue glow on focus */
+      outline: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff; /* Primary blue button */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-weight: 600;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3; /* Darker blue on hover */
+      transform: translateY(-1px); /* Slight lift effect */
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0); /* Press down effect */
+    }
+
+    button:disabled {
+      background-color: #a0a0a0;
+      cursor: not-allowed;
+    }
+
+    #room-controls {
+      display: flex;
+      flex-wrap: wrap; /* Allow wrapping */
+      gap: 10px; /* Space between elements */
+      justify-content: center;
+      padding: 25px; /* More padding for controls */
+    }
+    #room-controls input[type=text] {
+      flex: 1;
+      min-width: 250px; /* Ensure input doesn't get too small */
+    }
+    #room-controls button {
+      margin-left: 0; /* Remove default margin */
+    }
+
+    #room-info-container {
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center content */
+      gap: 10px;
+      font-size: 1.1em;
+      color: #4a4a4a;
+    }
+    #current-room {
+      font-weight: 600;
+      color: #007bff;
+    }
+    #copy-room-btn {
+      padding: 8px 15px; /* Smaller copy button */
+      font-size: 0.9em;
+    }
+
+    #room-warning {
+      text-align: center;
+      background-color: #fff3cd; /* Light yellow for warning */
+      color: #856404;
+      border: 1px solid #ffeeba;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+
+    /* Chat Container */
+    #chat-container {
+      padding: 0; /* No internal padding for chat container itself */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Ensure chat container has shadow */
+      border-radius: 8px;
+      overflow: hidden; /* To contain messages and input well */
+    }
+
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      padding: 15px; /* Padding inside the messages area */
+      background-color: #e9ecef; /* Light gray for chat background */
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      flex-direction: column;
+      gap: 8px; /* Space between messages */
+    }
+
+    .message-bubble {
+        background-color: #ffffff;
+        padding: 8px 12px;
+        border-radius: 18px; /* More rounded */
+        max-width: 80%; /* Limit bubble width */
+        word-wrap: break-word;
+        align-self: flex-start; /* Default for general messages */
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08); /* Subtle shadow on bubbles */
+    }
+
+    .system-message {
+      font-style: italic;
+      color: #6c757d; /* Muted gray for system messages */
+      text-align: center;
+      font-size: 0.9em;
+      padding: 5px;
+      border-radius: 5px;
+      background-color: #e2e6ea;
+      align-self: center;
+      max-width: 90%;
+    }
+
+    #input-container {
+      display: flex;
+      padding: 15px; /* Padding around input */
+      background-color: #f8f9fa; /* Lighter background for input area */
+      border-top: 1px solid #e9ecef;
+    }
+
+    #username-display {
+      margin-right: 10px;
+      min-width: 90px; /* Slightly wider */
+      font-weight: 600;
+      color: #4a4a4a;
+      display: flex;
+      align-items: center; /* Vertically center username */
+      justify-content: flex-end; /* Align right */
+      padding-right: 5px;
+    }
+    #msg {
+      flex: 1;
+    }
+    #send-btn {
+      margin-left: 10px; /* Space from input */
+      padding: 12px 25px;
+    }
+
+    /* Key Exchange Status */
+    #key-exchange-status {
+      margin: 15px; /* Margin inside chat container, outside specific message area */
+      font-size: 0.9em;
+      font-style: italic;
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      display: none; /* Hidden by default */
+    }
+    #key-exchange-status.pending-own, #key-exchange-status.pending-others {
+      background-color: #ffe0b2; /* Light orange */
+      color: #e65100; /* Darker orange */
+      border: 1px solid #ff9800;
+    }
+    #key-exchange-status.ready {
+      background-color: #d4edda; /* Light green */
+      color: #155724; /* Darker green */
+      border: 1px solid #28a745;
+    }
+    #key-exchange-status.error { /* New error state for status */
+      background-color: #f8d7da; /* Light red */
+      color: #721c24; /* Darker red */
+      border: 1px solid #dc3545;
+    }
+
+    /* Toggle Buttons Container (only for raw chat now) */
+    .toggle-buttons-container {
+      padding: 15px; /* Smaller padding */
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+      border-radius: 8px;
+    }
+    .toggle-buttons-container label {
+        font-size: 0.95em;
+        color: #495057;
+        cursor: pointer;
+    }
+    .toggle-buttons-container input[type="checkbox"] {
+        transform: scale(1.2); /* Slightly larger checkbox */
+        cursor: pointer;
+    }
+
+    /* Participants Section */
+    #participants-container {
+      margin-top: 0; /* Align with other sections */
+      padding: 20px;
+    }
+    #participants-container h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      color: #2c3e50;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    #participant-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-height: 150px; /* Limit height for scroll */
+      overflow-y: auto;
+      padding-right: 5px; /* Space for scrollbar */
+    }
+    .participant-entry {
+      display: flex;
+      align-items: center;
+      background-color: #e9f5ff; /* Light blue for participant tags */
+      border: 1px solid #cceeff;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      color: #004085;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .participant-entry input[type="checkbox"] {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    .participant-entry.self {
+      background-color: #d4edda; /* Light green for self */
+      border-color: #28a745;
+      color: #155724;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>PGP Chat+</h1>
+  <p class="slogan">The Gold Standard of Privacy. It's PGP.</p>
+
+  <div id="room-controls">
+    <input id="room-input" type="text" placeholder="Enter Room ID to join or create" autocomplete="off" />
+    <button id="join-btn">Join Room</button>
+    <button id="create-btn">Create New Private Room</button>
+  </div>
+
+  <div id="room-info-container">
+    <div>Room ID: <span id="current-room"></span></div>
+    <button id="copy-room-btn" title="Copy Room ID">Copy</button>
+  </div>
+
+  <div id="room-warning" class="private">
+    This is a private, <strong>end-to-end encrypted</strong> room. Messages are visible <strong>only to people who have this Room ID and your shared PGP keys.</strong> Share it carefully!
+  </div>
+
+  <div id="participants-container">
+    <h2>Participants</h2>
+    <div id="participant-list">
+      </div>
+  </div>
+
+  <div id="chat-container">
+    <div id="key-exchange-status"></div> <div id="messages"></div>
+    <div id="input-container">
+      <div id="username-display"></div>
+      <input id="msg" type="text" placeholder="Write a message..." autocomplete="off" disabled /> <button id="send-btn" disabled>Send</button> </div>
+  </div>
+
+  <div class="toggle-buttons-container">
+      <input type="checkbox" id="raw-chat-toggle">
+      <label for="raw-chat-toggle">Show Raw Chat (Server View)</label>
+  </div>
+
+  <script>
+    const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
+    let currentRoom = '';
+    
+    const roomInput = document.getElementById('room-input');
+    const joinBtn = document.getElementById('join-btn');
+    const createBtn = document.getElementById('create-btn');
+    const currentRoomSpan = document.getElementById('current-room');
+    const copyRoomBtn = document.getElementById('copy-room-btn');
+    const roomWarning = document.getElementById('room-warning');
+    const messagesDiv = document.getElementById('messages');
+    const msgInput = document.getElementById('msg');
+    const sendBtn = document.getElementById('send-btn');
+    const usernameDisplay = document.getElementById('username-display');
+
+    const keyExchangeStatus = document.getElementById('key-exchange-status'); // Status indicator
+    const rawChatToggle = document.getElementById('raw-chat-toggle'); // Raw chat toggle checkbox
+
+    const participantListDiv = document.getElementById('participant-list'); // New participant list div
+
+    let board;
+    let listeners = [];
+    let ownKeysGenerated = false; // Flag to track if own PGP keys are generated
+    let showRawChat = false; // State for raw chat view
+    let messageCache = []; // Stores all messages for re-rendering on toggle
+    const displayedMessageIds = new Set(); // Tracks unique IDs processed by Gun.map().on
+
+    // Map to store other users' public keys by username
+    const otherUsersPublicKeys = new Map();
+    // Set to store currently selected recipient usernames for encryption
+    const selectedRecipients = new Set(); 
+
+    // Function to update key exchange status UI and enable/disable inputs
+    function updateKeyExchangeStatus(statusType) {
+      keyExchangeStatus.style.display = 'block';
+      keyExchangeStatus.classList.remove('ready', 'pending-own', 'pending-others'); // Clear previous classes
+
+      msgInput.disabled = true;
+      sendBtn.disabled = true;
+
+      if (statusType === 'generating-keys') {
+        keyExchangeStatus.textContent = "Generating your PGP keys for secure communication...";
+        keyExchangeStatus.classList.add('pending-own');
+      } else if (statusType === 'waiting-for-others') {
+        keyExchangeStatus.textContent = "Your PGP keys are active. Waiting for other users to join and exchange keys. Sending is disabled to ensure encryption for all participants.";
+        keyExchangeStatus.classList.add('pending-others');
+      } else if (statusType === 'ready-to-send') {
+        keyExchangeStatus.textContent = "Secure connection established! Messages will be encrypted for all known participants (check Participants list).";
+        keyExchangeStatus.classList.add('ready');
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+      } else if (statusType === 'no-room') {
+        keyExchangeStatus.textContent = "Please join or create a private room to start chatting.";
+        keyExchangeStatus.style.display = 'block';
+        keyExchangeStatus.classList.add('pending-others'); // Neutral style for 'no room' state
+      }
+    }
+
+    // New function to consolidate logic for checking key readiness
+    function checkKeyExchangeReadiness() {
+        if (ownKeysGenerated && otherUsersPublicKeys.size > 0) {
+            updateKeyExchangeStatus('ready-to-send');
+        } else if (ownKeysGenerated) {
+            updateKeyExchangeStatus('waiting-for-others');
+        } else {
+            updateKeyExchangeStatus('generating-keys');
+        }
+    }
+
+    // Generate a random username (name + number)
+    function randomUsername() {
+      const names = ['mark','jane','alex','lily','chris','sam','max','tina','leo','nina'];
+      return names[Math.floor(Math.random()*names.length)] + Math.floor(Math.random()*900+100);
+    }
+    const username = randomUsername();
+    usernameDisplay.textContent = username;
+    msgInput.placeholder = `Message as ${username}...`;
+
+    function randomString(length = 12) {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      for(let i=0; i<length; i++){
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+
+    // Clears messages from the DOM
+    function clearMessages() {
+      messagesDiv.innerHTML = '';
+    }
+
+    // Adds a message to the DOM display (used by renderMessages)
+    function addMessageToDisplay(id, text, isSystem = false) { 
+      // This check is mainly for re-rendering from cache, ensuring no duplicate DOM elements
+      if(document.getElementById(id)) {
+        return;
+      }
+      const div = document.createElement('div');
+      div.id = id;
+      div.classList.add('message-bubble'); // Add bubble class
+      if (isSystem) {
+        div.classList.add('system-message');
+      }
+      div.textContent = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Renders all messages from messageCache to the UI based on showRawChat state
+    function renderMessages() {
+        clearMessages(); // Clear existing messages in the DOM
+        messageCache.forEach(msg => {
+            const textToDisplay = showRawChat && msg.rawText !== null ? msg.rawText : msg.displayText;
+            addMessageToDisplay(msg.id, textToDisplay, msg.isSystem);
+        });
+    }
+
+    function cleanupListeners() {
+      listeners.forEach(off => off());
+      listeners = [];
+      otherUsersPublicKeys.clear();
+      selectedRecipients.clear(); // Clear selected recipients too
+      messageCache = []; // Clear message cache
+      displayedMessageIds.clear(); // Clear processed IDs for new room
+
+      // Removed clearInterval(window.publicKeyBroadcastInterval); as interval is no longer used
+      checkKeyExchangeReadiness();
+    }
+
+    function updateRoomWarning() {
+      // Reverted to the desired message with bolding via <strong> tags
+      roomWarning.innerHTML = 'This is a private, <strong>end-to-end encrypted</strong> room. Messages are visible <strong>only to people who have this Room ID and your shared PGP keys.</strong> Share it carefully!';
+      roomWarning.classList.remove('public');
+      roomWarning.classList.add('private');
+    }
+
+    function updateRoomDisplay() {
+      currentRoomSpan.style.display = 'inline';
+      copyRoomBtn.style.display = 'inline-block';
+      currentRoomSpan.textContent = currentRoom;
+    }
+
+    // PGP keypair storage
+    let privateKeyObj;
+    let publicKeyArmored;
+    let privateKeyArmored;
+
+    async function generatePGPKeys() {
+      updateKeyExchangeStatus('generating-keys'); // Updates key status UI
+      try {
+        const { privateKey, publicKey } = await openpgp.generateKey({
+          type: 'rsa',
+          rsaBits: 2048,
+          userIDs: [{ name: username, email: `${username}@syncspace.chat` }],
+          format: 'armored'
+        });
+        privateKeyArmored = privateKey;
+        publicKeyArmored = publicKey;
+        privateKeyObj = await openpgp.readPrivateKey({ armoredKey: privateKeyArmored });
+
+        ownKeysGenerated = true; // Mark as true after successful generation
+      } catch (e) {
+        console.error("PGP Key Generation Error:", e); // Log full error to browser console
+        alert("Failed to generate PGP keys. Secure chat will not be possible. Check browser console for details.");
+      }
+    }
+
+    // Update the UI for participants
+    function updateParticipantListUI() {
+        participantListDiv.innerHTML = ''; // Clear existing list
+
+        // Add self to the list (always checked, not selectable)
+        const selfEntry = document.createElement('div');
+        selfEntry.classList.add('participant-entry', 'self');
+        selfEntry.innerHTML = `<span>${username} (You)</span>`;
+        participantListDiv.appendChild(selfEntry);
+
+        // Add other users
+        otherUsersPublicKeys.forEach((key, user) => {
+            if (user === username) return; // Skip self if somehow included
+
+            const entry = document.createElement('div');
+            entry.classList.add('participant-entry');
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `participant-${user}`;
+            // Check if this user is already in selectedRecipients, otherwise default to true
+            checkbox.checked = selectedRecipients.has(user) || true; // Ensures new users are auto-selected
+
+            checkbox.dataset.username = user;
+
+            // Ensure new user is added to selectedRecipients if not already there
+            if (!selectedRecipients.has(user)) {
+                selectedRecipients.add(user);
+            }
+
+            checkbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    selectedRecipients.add(user);
+                } else {
+                    selectedRecipients.delete(user);
+                }
+            });
+
+            const label = document.createElement('label');
+            label.htmlFor = `participant-${user}`;
+            label.textContent = user;
+
+            entry.appendChild(checkbox);
+            entry.appendChild(label);
+            participantListDiv.appendChild(entry);
+        });
+    }
+
+    // Removed startBroadcastingPublicKey function as it's no longer needed for "send once"
+
+    // Function to decrypt a message with private key
+    async function decryptMessage(encrypted) {
+      try {
+        const message = await openpgp.readMessage({
+          armoredMessage: encrypted
+        });
+
+        const { data: decrypted } = await openpgp.decrypt({
+          message,
+          decryptionKeys: privateKeyObj
+        });
+        return decrypted;
+      } catch (e) {
+        // Log decryption error for internal debugging, but don't show to user immediately
+        console.error("Decryption Error:", e);
+        return null; // failed to decrypt
+      }
+    }
+
+    // Function to encrypt a message with multiple recipient's public keys
+    async function encryptMessageForMultiple(messageText, publicKeysArray) {
+      if (publicKeysArray.length === 0) {
+        return null;
+      }
+      try {
+        const encrypted = await openpgp.encrypt({
+          message: await openpgp.createMessage({ text: messageText }),
+          encryptionKeys: publicKeysArray
+        });
+        return encrypted;
+      } catch (e) {
+        console.error("Encryption Error:", e); // Log full error to browser console
+        return null;
+      }
+    }
+
+    function setupRoom(room) {
+      if (currentRoom === room && board) {
+        return;
+      }
+      cleanupListeners(); // Cleans up previous room's state and resets key exchange status
+
+      currentRoom = room;
+      updateRoomWarning();
+      updateRoomDisplay();
+      // Clear the input field after successful room setup
+      roomInput.value = ''; 
+
+      board = gun.get('private-room-chat').get(room);
+
+      // --- CRITICAL CHANGE: Send public key once when room is set up ---
+      if (publicKeyArmored) {
+        const id = 'pubkey-' + username;
+        board.get(id).put({
+          username,
+          type: 'pubkey',
+          publicKey: publicKeyArmored,
+          timestamp: Date.now()
+        });
+      }
+      // -----------------------------------------------------------------
+
+      const off = board.map().on(async (data, id) => {
+        if (!data || data._['>'] === undefined) {
+            return;
+        }
+
+        // Use displayedMessageIds to prevent redundant *processing* of already handled IDs
+        if (displayedMessageIds.has(id)) {
+            return;
+        }
+
+        // Mark as processed immediately to avoid re-processing if Gun re-emits quickly
+        displayedMessageIds.add(id);
+
+        if (data.type === 'pubkey' && data.username && data.publicKey) {
+            if (data.username !== username && !otherUsersPublicKeys.has(data.username)) {
+                otherUsersPublicKeys.set(data.username, data.publicKey);
+                // Removed the system message for public key receipt:
+                // messageCache.push({ id: id, displayText: msgText, rawText: null, isSystem: true });
+
+                // Automatically add new user to selected recipients
+                selectedRecipients.add(data.username); 
+
+                checkKeyExchangeReadiness();
+                updateParticipantListUI(); // Rebuilds the UI to show the new participant as checked
+                renderMessages(); // Re-render if new system messages were added (none now)
+            }
+            return;
+        }
+
+        if (data.text) {
+            if (data.text.startsWith('[enc]')) {
+                const encryptedPart = data.text.slice(5);
+                const decrypted = await decryptMessage(encryptedPart); // Always attempt decryption
+
+                // Only add to messageCache if successfully decrypted
+                if (decrypted) {
+                    messageCache.push({ id: id, displayText: decrypted, rawText: data.text, isSystem: false });
+                } else {
+                    // If decryption fails, do not add the message to the display cache.
+                    // This effectively hides messages not meant for the current user.
+                }
+            } else {
+                // This branch handles plaintext messages, which should always be displayed if received.
+                messageCache.push({ id: id, displayText: `[Plaintext message received - possible unencrypted send] ${data.text}`, rawText: data.text, isSystem: false });
+            }
+            renderMessages(); // Re-render to show new messages (or hide old ones)
+        }
+      });
+
+      listeners.push(() => {
+        if (typeof off === 'function') off();
+      });
+
+      // Removed startBroadcastingPublicKey(); call here
+      
+      // Initial check for readiness immediately after setting up listener
+      setTimeout(checkKeyExchangeReadiness, 100); // Small delay to allow Gun to process initial map data
+    }
+
+    sendBtn.onclick = async () => {
+      const text = msgInput.value.trim();
+
+      if (!text || !board) {
+        return;
+      }
+
+      if (!ownKeysGenerated) {
+        const message = "Sending aborted: Your own PGP keys are not yet generated. Please wait.";
+        updateKeyExchangeStatus('generating-keys');
+        return; 
+      }
+
+      if (selectedRecipients.size === 0) {
+        // This means only 'self' is in the encryptionKeys, if even that.
+        // Alert user if they intend to encrypt for others but haven't selected anyone.
+        alert("No recipients selected! Message will only be encrypted for yourself. Check the 'Participants' list to select recipients.");
+        // We still allow sending, but the user is warned. If the intent is to only encrypt for self, this is fine.
+      }
+
+
+      const messageContent = `${username}: ${text}`;
+      let messageToSend;
+      const messageId = Date.now().toString() + '-' + randomString(6);
+
+      const encryptionKeys = [];
+      // Always add own public key first to ensure sender can decrypt their own messages
+      if (publicKeyArmored) {
+          try {
+            encryptionKeys.push(await openpgp.readKey({ armoredKey: publicKeyArmored }));
+          } catch (e) {
+            console.error("Error reading own PGP public key:", e);
+            return; // Abort if own key can't be used for encryption
+          }
+      } else {
+          return;
+      }
+
+      // Add public keys for *selected* recipients only
+      selectedRecipients.forEach(async (user) => {
+          const pubKeyArmored = otherUsersPublicKeys.get(user);
+          if (pubKeyArmored) {
+              try {
+                  encryptionKeys.push(await openpgp.readKey({ armoredKey: pubKeyArmored }));
+              } catch (e) {
+                  console.error(`Skipping invalid public key for ${user} during encryption:`, e);
+              }
+          }
+      });
+      
+      const encrypted = await encryptMessageForMultiple(messageContent, encryptionKeys);
+      if (encrypted) {
+          messageToSend = `[enc]${encrypted}`;
+      } else {
+          keyExchangeStatus.textContent = "CRITICAL ERROR: Encryption failed. Message not sent. Check browser console.";
+          keyExchangeStatus.classList.remove('ready');
+          keyExchangeStatus.classList.add('pending-others');
+          return; // Prevent sending if encryption fails
+      }
+
+      board.get(messageId).put({ text: messageToSend, timestamp: Date.now() });
+      msgInput.value = '';
+    };
+
+    msgInput.addEventListener('keydown', e => {
+      if(e.key === 'Enter' && !msgInput.disabled){ // Ensure input is enabled
+        sendBtn.click();
+      }
+    });
+
+    copyRoomBtn.onclick = () => {
+      if (currentRoom) {
+        navigator.clipboard.writeText(currentRoom).then(() => {
+          copyRoomBtn.textContent = 'Copied!';
+          setTimeout(() => {
+            copyRoomBtn.textContent = 'Copy';
+          }, 1500);
+        }).catch(err => {
+          console.error("Clipboard copy error:", err);
+        });
+      } else {
+        keyExchangeStatus.textContent = "No room ID available to copy.";
+        keyExchangeStatus.style.display = 'block';
+        keyExchangeStatus.classList.add('pending-others');
+      }
+    };
+
+    // Room control buttons
+    joinBtn.onclick = () => {
+        const roomId = roomInput.value.trim();
+        if (roomId) {
+            setupRoom(roomId);
+        } else {
+            keyExchangeStatus.textContent = "Please enter a Room ID to join.";
+            keyExchangeStatus.style.display = 'block';
+            keyExchangeStatus.classList.add('pending-others');
+        }
+    };
+
+    createBtn.onclick = () => {
+        const newRoomId = randomString(16);
+        setupRoom(newRoomId);
+    };
+
+    // Raw Chat Toggle event listener
+    rawChatToggle.addEventListener('change', () => {
+        showRawChat = rawChatToggle.checked;
+        renderMessages(); // Re-render all messages based on the new mode
+    });
+
+    // Initialize the application: Generate keys and automatically create an initial room
+    (async () => {
+      updateKeyExchangeStatus('generating-keys'); // Updates key status UI
+      await generatePGPKeys();
+      
+      // After own keys are generated, perform an initial readiness check
+      checkKeyExchangeReadiness(); // This will transition to 'waiting-for-others'
+
+      const initialRoomId = randomString(16);
+      setupRoom(initialRoomId); // Joins the room and sends public key once
+      updateParticipantListUI(); // Initial display of self in participants list
+    })();
+  </script>
+</body>
+</html>
