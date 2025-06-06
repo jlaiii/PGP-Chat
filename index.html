@@ -408,14 +408,18 @@
     usernameDisplay.textContent = username;
     msgInput.placeholder = `Message as ${username}...`;
 
-    function randomString(length = 12) {
+    // --- MODIFIED: randomString to generate length between 16 and 20 ---
+    function randomString() {
       const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      // Generate a random length between 16 and 20 (inclusive)
+      const length = Math.floor(Math.random() * (20 - 16 + 1)) + 16;
       let result = '';
       for(let i=0; i<length; i++){
         result += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       return result;
     }
+    // -------------------------------------------------------------------
 
     // Clears messages from the DOM
     function clearMessages() {
@@ -456,12 +460,10 @@
       messageCache = []; // Clear message cache
       displayedMessageIds.clear(); // Clear processed IDs for new room
 
-      // Removed clearInterval(window.publicKeyBroadcastInterval); as interval is no longer used
       checkKeyExchangeReadiness();
     }
 
     function updateRoomWarning() {
-      // Reverted to the desired message with bolding via <strong> tags
       roomWarning.innerHTML = 'This is a private, <strong>end-to-end encrypted</strong> room. Messages are visible <strong>only to people who have this Room ID and your shared PGP keys.</strong> Share it carefully!';
       roomWarning.classList.remove('public');
       roomWarning.classList.add('private');
@@ -546,8 +548,6 @@
         });
     }
 
-    // Removed startBroadcastingPublicKey function as it's no longer needed for "send once"
-
     // Function to decrypt a message with private key
     async function decryptMessage(encrypted) {
       try {
@@ -598,7 +598,7 @@
 
       board = gun.get('private-room-chat').get(room);
 
-      // --- CRITICAL CHANGE: Send public key once when room is set up ---
+      // Send public key once when room is set up
       if (publicKeyArmored) {
         const id = 'pubkey-' + username;
         board.get(id).put({
@@ -608,7 +608,6 @@
           timestamp: Date.now()
         });
       }
-      // -----------------------------------------------------------------
 
       const off = board.map().on(async (data, id) => {
         if (!data || data._['>'] === undefined) {
@@ -626,15 +625,13 @@
         if (data.type === 'pubkey' && data.username && data.publicKey) {
             if (data.username !== username && !otherUsersPublicKeys.has(data.username)) {
                 otherUsersPublicKeys.set(data.username, data.publicKey);
-                // Removed the system message for public key receipt:
-                // messageCache.push({ id: id, displayText: msgText, rawText: null, isSystem: true });
-
+                
                 // Automatically add new user to selected recipients
                 selectedRecipients.add(data.username); 
 
                 checkKeyExchangeReadiness();
                 updateParticipantListUI(); // Rebuilds the UI to show the new participant as checked
-                renderMessages(); // Re-render if new system messages were added (none now)
+                // No need to renderMessages here as we removed the system messages.
             }
             return;
         }
@@ -662,8 +659,6 @@
       listeners.push(() => {
         if (typeof off === 'function') off();
       });
-
-      // Removed startBroadcastingPublicKey(); call here
       
       // Initial check for readiness immediately after setting up listener
       setTimeout(checkKeyExchangeReadiness, 100); // Small delay to allow Gun to process initial map data
@@ -683,16 +678,13 @@
       }
 
       if (selectedRecipients.size === 0) {
-        // This means only 'self' is in the encryptionKeys, if even that.
-        // Alert user if they intend to encrypt for others but haven't selected anyone.
         alert("No recipients selected! Message will only be encrypted for yourself. Check the 'Participants' list to select recipients.");
-        // We still allow sending, but the user is warned. If the intent is to only encrypt for self, this is fine.
       }
 
 
       const messageContent = `${username}: ${text}`;
       let messageToSend;
-      const messageId = Date.now().toString() + '-' + randomString(6);
+      const messageId = Date.now().toString() + '-' + randomString(6); // This randomString is for message ID, not room ID
 
       const encryptionKeys = [];
       // Always add own public key first to ensure sender can decrypt their own messages
@@ -769,7 +761,7 @@
     };
 
     createBtn.onclick = () => {
-        const newRoomId = randomString(16);
+        const newRoomId = randomString(); // Calls the new randomString function
         setupRoom(newRoomId);
     };
 
@@ -787,7 +779,7 @@
       // After own keys are generated, perform an initial readiness check
       checkKeyExchangeReadiness(); // This will transition to 'waiting-for-others'
 
-      const initialRoomId = randomString(16);
+      const initialRoomId = randomString(); // Calls the new randomString function for initial room
       setupRoom(initialRoomId); // Joins the room and sends public key once
       updateParticipantListUI(); // Initial display of self in participants list
     })();
