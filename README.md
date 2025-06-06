@@ -13,6 +13,8 @@ In a world where digital privacy is increasingly scrutinized, I sought a communi
 
 This led me to build **PGP Chat+**. I didn't want to trust anyone else with my privacy, so I built it myself. This project is a straightforward, browser-based chat application leveraging **Gun.js for decentralized data storage** and **OpenPGP.js for robust cryptographic operations**. It's designed for those who demand the highest level of privacy in their casual conversations.
 
+---
+
 ## How It Works: Simple, Secure, Decentralized Magic ✨
 
 PGP Chat+ creates **private, ephemeral chat rooms** where every message is encrypted using PGP (Pretty Good Privacy) standards. Here's a deeper dive into the magic behind the privacy:
@@ -41,6 +43,8 @@ PGP Chat+ creates **private, ephemeral chat rooms** where every message is encry
 
 In essence, PGP Chat+ provides a secure "digital envelope" for every message, sealed with multiple locks (one for each recipient's public key), and then sent across a public, decentralized messenger service. Only those with the matching "keys" (their private PGP keys) can open their specific lock and read the message.
 
+---
+
 ## Message & Server Hosting Explained
 
 PGP Chat+ uses a decentralized database called **Gun.js**. This means:
@@ -51,15 +55,21 @@ PGP Chat+ uses a decentralized database called **Gun.js**. This means:
 * **High Persistence:** Messages sent through this network are generally highly persistent. They will remain accessible for a very long time as long as there is at least one active Gun.js relay server or peer holding that data. There is no automatic "time-to-live" or deletion mechanism built into Gun.js itself for this data.
 * **Your Privacy Shield: PGP Encryption:** Because messages are highly persistent on the decentralized network, your privacy is **solely dependent on the strength of the PGP end-to-end encryption**. Even if someone accesses the raw data on a Gun.js relay, they cannot read your messages without the corresponding private PGP keys.
 
+---
+
 ## Features ✨
 
 * **True End-to-End Encryption:** Messages are encrypted in your browser and can only be decrypted by the intended recipients using their private PGP keys. 🔒
-* **Private Rooms:** Each room is uniquely identified by a Room ID, acting as a shared secret to enter. 🚪
+* **Private Rooms:** Each room is uniquely identified by a **Room ID**, acting as a shared secret to enter. 🚪
 * **Decentralized:** Built on Gun.js, providing robust, peer-to-peer data synchronization without a central server. 🌐
 * **Automatic PGP Key Generation:** Your PGP keys are generated instantly in your browser when you enter a room – no setup required! 🚀
+* **Random Room ID Length:** Room IDs are generated with a random length between 16 and 20 characters to enhance unpredictability. 🎲
 * **Simple Participant Management:** Easily see who's in the room and select who to encrypt your messages for. 👋
 * **"Show Raw Chat" Toggle:** For advanced users, view the encrypted data as it exists on the decentralized network, confirming the encryption. 🕵️‍♂️
 * **Ephemeral Nature (from a user's perspective if Room ID is lost):** While Gun.js data persists, the *privacy* is tied to the room ID and shared keys. If you lose the room ID or the participants leave, the conversation effectively vanishes *for you*, as you can no longer access that specific data stream. 👻
+* **Mobile-Friendly Design:** The application is designed to look and work great on both desktop and mobile browsers, adapting fluidly to different screen sizes. 📱💻
+
+---
 
 ## Disclaimers & Important Considerations ⚠️
 
@@ -71,6 +81,8 @@ PGP Chat+ uses a decentralized database called **Gun.js**. This means:
 * **No Message History Persistence (for new joiners):** Due to the E2EE design, users who join a room *after* messages have been sent will *not* be able to decrypt past messages, as they wouldn't have had the necessary public keys at the time of encryption. ⏳
 * **No User Accounts:** There are no user accounts, passwords, or persistent identities. Your username is randomly generated each time, promoting anonymity but also meaning you must share your Room ID to re-enter a specific conversation. 👤
 * **Experimental Nature:** This project is for educational and experimental purposes. While it implements standard PGP encryption, it has not undergone formal security audits. Use at your own discretion for sensitive communications. 🧪
+
+---
 
 ## Getting Started 🚀
 
