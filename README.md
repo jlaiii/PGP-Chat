@@ -1,37 +1,47 @@
 # PGP Chat+
 
-PGP Chat+ is a web-based, end-to-end encrypted group chat application. It uses [OpenPGP.js](https://openpgpjs.org/) for encryption and [GUN](https://gun.eco/) for decentralized data synchronization. Messages are encrypted with PGP keys before being shared, and only participants with the correct keys can decrypt the content.
+PGP Chat+ is a web-based, end-to-end encrypted group chat app built with privacy and decentralization in mind. It uses [OpenPGP.js](https://openpgpjs.org/) for strong encryption and [GUN](https://gun.eco/) for decentralized, peer-to-peer data synchronization.
 
 ## Features
 
 - End-to-end encrypted messaging
-- Decentralized backend via GUN
-- Automatic key generation per user
-- Room-based chat with shareable Room ID
-- Toggle to view raw encrypted messages
-- Option to auto-add new users for encryption
-- Responsive and clean UI design
+- Decentralized backend with no central server
+- Automatic per-user PGP key generation in the browser
+- Keys stored in RAM only (wiped on refresh or close)
+- Room-based chats with copy/share Room ID
+- Optional "Raw View" to see encrypted messages
+- Mobile-friendly and responsive design
+
+## How It Works
+
+### PGP Key Handling
+
+- Each time a user opens the app, a new PGP keypair is generated in the browser using `openpgp.js`.
+- **Private keys are never saved to disk or cloud.**
+- All keys are stored **only in RAM**, meaning they are automatically deleted when the browser is refreshed or closed.
+- This ensures that no sensitive cryptographic data is left behind—similar to how **Mullvad VPN uses RAM-only servers** for privacy.
+
+### Message Storage
+
+- Messages are encrypted using OpenPGP before being sent.
+- The encrypted messages are stored in a decentralized GUN database.
+- Messages are **never readable** by the server or any third-party, only by recipients with the correct private key.
+- The raw encrypted data can optionally be viewed for transparency/debugging.
 
 ## Technologies Used
 
-- HTML/CSS/JavaScript
-- [GUN.js](https://gun.eco/)
-- [OpenPGP.js](https://github.com/openpgpjs/openpgpjs)
+- HTML, CSS, JavaScript
+- [GUN.js](https://gun.eco/) for decentralized data sync
+- [OpenPGP.js](https://github.com/openpgpjs/openpgpjs) for encryption
 - Google Fonts (Inter)
 
-## How to Use
+## Usage Instructions
 
-1. Open the web app in your browser.
-2. Enter a unique Room ID to join or create a private chat room.
-3. Share the Room ID with others to invite them.
-4. Start chatting securely.
-
-## Security Notes
-
-- All messages are encrypted using PGP before being sent.
-- Only users with the proper keys can decrypt the messages.
-- No server stores messages in plain text.
+1. Open the app in your browser.
+2. Enter or share a unique Room ID to create or join a private room.
+3. Begin chatting. Messages will be encrypted and sent securely.
+4. Share the Room ID with others to invite them to the conversation.
 
 ## Live Demo
 
-You can try it here: [https://github.com/jlaiii/PGP-Chat](https://github.com/jlaiii/PGP-Chat)
+Try it here: [https://github.com/jlaiii/PGP-Chat](https://github.com/jlaiii/PGP-Chat)
